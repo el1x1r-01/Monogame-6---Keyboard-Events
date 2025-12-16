@@ -92,22 +92,22 @@ namespace Monogame_6___Keyboard_Events
 
             pacSpeed = Vector2.Zero;
 
-            if (keyboardState.IsKeyDown(Keys.Up))
+            if (keyboardState.IsKeyDown(Keys.Up) && pacLocation.Y > 0)
             {
                 pacTexture = pacUp;
                 pacSpeed.Y -= speed;
             }
-            else if (keyboardState.IsKeyDown(Keys.Down))
+            else if (keyboardState.IsKeyDown(Keys.Down) && pacLocation.Y < 525)
             {
                 pacTexture = pacDown;
                 pacSpeed.Y += speed;
             }
-            else if (keyboardState.IsKeyDown(Keys.Left))
+            else if (keyboardState.IsKeyDown(Keys.Left) && pacLocation.X > 0)
             {
                 pacTexture = pacLeft;
                 pacSpeed.X -= speed;
             }
-            else if (keyboardState.IsKeyDown(Keys.Right))
+            else if (keyboardState.IsKeyDown(Keys.Right) && pacLocation.X < 725)
             {
                 pacTexture = pacRight;
                 pacSpeed.X += speed;
@@ -138,7 +138,7 @@ namespace Monogame_6___Keyboard_Events
                 {
                     speed = speed - 1;
 
-                    if (speed < -20)
+                    if (speed <= 1)
                     {
                         speed = 1;
                     }
