@@ -10,18 +10,31 @@ namespace Monogame_6___Keyboard_Events
         private SpriteBatch _spriteBatch;
 
         Rectangle window,
-            pacLocation;
+            pacLocation,
+            plusRect,
+            minusRect;
 
         Texture2D pacTexture,
             pacUp,
             pacDown,
             pacRight,
             pacLeft,
-            pacSleep;
+            pacSleep,
+            plusTexture,
+            minusTexture;
 
         Vector2 pacSpeed;
 
         KeyboardState keyboardState;
+
+        MouseState mouseState,
+            prevMouseState;
+
+        SpriteFont speedFont;
+
+        string speedText;
+
+        int speed;
 
         public Game1()
         {
@@ -41,6 +54,11 @@ namespace Monogame_6___Keyboard_Events
 
             pacLocation = new Rectangle(10, 10, 75, 75);
 
+            plusRect = new Rectangle(10, 550, 40, 40);
+            minusRect = new Rectangle(60, 550, 40, 40);
+
+            speed = 1;
+
             base.Initialize();
         }
 
@@ -55,6 +73,10 @@ namespace Monogame_6___Keyboard_Events
             pacRight = Content.Load<Texture2D>("PacRight");
             pacLeft = Content.Load<Texture2D>("PacLeft");
             pacSleep = Content.Load<Texture2D>("PacSleep");
+
+            plusTexture = Content.Load<Texture2D>("Plus");
+            minusTexture = Content.Load<Texture2D>("Minus");
+            speedFont = Content.Load<SpriteFont>("SpeedFont");
         }
 
         protected override void Update(GameTime gameTime)
@@ -73,26 +95,54 @@ namespace Monogame_6___Keyboard_Events
             if (keyboardState.IsKeyDown(Keys.Up))
             {
                 pacTexture = pacUp;
-                pacSpeed.Y -= 2;
+                pacSpeed.Y -= speed;
             }
             else if (keyboardState.IsKeyDown(Keys.Down))
             {
                 pacTexture = pacDown;
-                pacSpeed.Y += 2;
+                pacSpeed.Y += speed;
             }
             else if (keyboardState.IsKeyDown(Keys.Left))
             {
                 pacTexture = pacLeft;
-                pacSpeed.X -= 2;
+                pacSpeed.X -= speed;
             }
             else if (keyboardState.IsKeyDown(Keys.Right))
             {
                 pacTexture = pacRight;
-                pacSpeed.X += 2;
+                pacSpeed.X += speed;
             }
             else
             {
                 pacTexture = pacSleep;
+            }
+
+            speedText = "Speed: " + speed;
+
+            prevMouseState = mouseState;
+            mouseState = Mouse.GetState();
+
+            if (mouseState.LeftButton == ButtonState.Pressed
+                && prevMouseState.LeftButton == ButtonState.Released)
+            {
+                if (plusRect.Contains(mouseState.Position))
+                {
+                    speed = speed + 1;
+
+                    if (speed > 20)
+                    {
+                        speed = 1;
+                    }
+                }
+                else if (minusRect.Contains(mouseState.Position))
+                {
+                    speed = speed - 1;
+
+                    if (speed < -20)
+                    {
+                        speed = 1;
+                    }
+                }
             }
 
             pacLocation.Offset(pacSpeed);
@@ -109,6 +159,10 @@ namespace Monogame_6___Keyboard_Events
             _spriteBatch.Begin();
 
             _spriteBatch.Draw(pacTexture, pacLocation, Color.White);
+
+            _spriteBatch.DrawString(speedFont, speedText, new Vector2(10, 515), Color.White);
+            _spriteBatch.Draw(plusTexture, plusRect, Color.White);
+            _spriteBatch.Draw(minusTexture, minusRect, Color.White);
 
             _spriteBatch.End();
 
